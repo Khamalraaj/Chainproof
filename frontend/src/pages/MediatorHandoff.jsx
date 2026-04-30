@@ -169,7 +169,11 @@ export default function MediatorHandoff() {
       formData.append('temperature', String(finalTemp));
       formData.append('locationName', locationName);
       formData.append('mediatorSignature', signatureBase64);
+      if (shipmentData?.temperatureThreshold) {
+        formData.append('temperatureThreshold', String(shipmentData.temperatureThreshold));
+      }
       const res = await logHandoff(formData);
+
       if (!res.success) {
         alert(`Warning: Blockchain updated, but local record update failed: ${res.message}`);
       }
@@ -307,7 +311,57 @@ export default function MediatorHandoff() {
                   <label style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-muted)' }}>DRIVER LICENSE / ID</label>
                   <input type="text" className="input-field" placeholder="DL-XXXXXXXX" />
                 </div>
+
+                <div className="input-group" style={{ background: 'rgba(26, 86, 219, 0.05)', padding: '16px', borderRadius: '12px', border: '1px solid rgba(26, 86, 219, 0.2)' }}>
+                  <label style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--color-accent)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span>CURRENT TEMPERATURE (°C)</span>
+                    {shipmentData && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ color: 'var(--text-muted)', fontSize: '0.7rem' }}>Trigger:</span>
+                        <input 
+                          type="number" 
+                          step="0.5"
+                          value={shipmentData.temperatureThreshold}
+                          onChange={(e) => {
+                            const newVal = parseFloat(e.target.value);
+                            setShipmentData(prev => ({ ...prev, temperatureThreshold: newVal }));
+                          }}
+                          style={{ 
+                            width: '50px', 
+                            background: 'white', 
+                            border: '1px solid #ccc', 
+                            borderRadius: '4px', 
+                            fontSize: '0.75rem', 
+                            padding: '2px 4px',
+                            fontWeight: 'bold',
+                            textAlign: 'center'
+                          }}
+                        />
+                        <span style={{ color: 'var(--text-muted)', fontSize: '0.7rem' }}>°C</span>
+                      </div>
+                    )}
+                  </label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '8px' }}>
+                    <input 
+                      type="number" 
+                      step="0.1"
+                      className="input-field" 
+                      style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--color-accent)' }}
+                      value={temperature} 
+                      onChange={e => setTemperature(e.target.value)} 
+                    />
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', flex: 1 }}>
+                      {parseFloat(temperature) > shipmentData?.temperatureThreshold ? 
+                        <span style={{ color: '#ef4444', fontWeight: 'bold' }}>⚠️ CRITICAL ALERT!</span> : 
+                        <span style={{ color: '#10b981', fontWeight: 'bold' }}>✅ SAFE RANGE</span>
+                      }
+                    </div>
+                  </div>
+
+                </div>
+
                 <div style={{ background: '#f8f9fa', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-light)', marginBottom: '20px' }}>
+
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <input type="checkbox" id="docCheck" style={{ width: '20px', height: '20px' }} checked={isDocVerified} onChange={e => setIsDocVerified(e.target.checked)} />
                     <label htmlFor="docCheck" style={{ fontSize: '0.9rem', fontWeight: '600', cursor: 'pointer' }}>✅ I have verified the driver's identity</label>

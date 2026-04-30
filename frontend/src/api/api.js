@@ -173,10 +173,17 @@ export const logHandoff = async (formData) => {
     const s = shipments[sIdx];
     console.log(`[API] Found shipment ${shipmentId}. Current isDispatched: ${s.isDispatched}`);
     
+    // Update threshold if provided (useful for testing)
+    const newThreshold = formData.get('temperatureThreshold');
+    if (newThreshold) {
+      s.temperatureThreshold = parseFloat(newThreshold);
+    }
+
     s.currentTemperature = temperature;
     
     // Update ML prediction
     const ml = predictShelfLife(s.goodsType, temperature, s.temperatureThreshold);
+
     s.status = ml.status;
     s.shelfLifeDays = ml.days;
     s.spoilageConfidence = ml.confidence;
