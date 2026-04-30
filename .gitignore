@@ -4,7 +4,9 @@ node_modules
 dist
 build
 *.mp4
+!frontend/public/*.mp4
 *.zip
 uploads/
 .gemini/
 .antigravity/
+
