@@ -15,10 +15,11 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user } = useAuth();
-  if (!user) return <Navigate to="/login" />;
-  if (allowedRoles && !allowedRoles.includes(user.role)) return <Navigate to="/" />;
+  if (!user) return <Navigate to="/about" />;
+  if (allowedRoles && !allowedRoles.includes(user.role)) return <Navigate to="/about" />;
   return children;
 };
+
 
 function AppRoutes() {
   const { user } = useAuth();
@@ -46,11 +47,14 @@ function AppRoutes() {
                 </ProtectedRoute>
               } />
               <Route path="/" element={
-                <ProtectedRoute>
-                  {user?.role === 'mediator' ? <Navigate to="/handoff" /> :
-                   (user?.role === 'consumer' || user?.role === 'customer') ? <Navigate to="/search" /> : <Dashboard />}
-                </ProtectedRoute>
+                user ? (
+                  <ProtectedRoute>
+                    {user.role === 'mediator' ? <Navigate to="/handoff" /> :
+                     (user.role === 'consumer' || user.role === 'customer') ? <Navigate to="/search" /> : <Dashboard />}
+                  </ProtectedRoute>
+                ) : <Navigate to="/about" />
               } />
+
               <Route path="/consumer" element={<Navigate to="/search" />} />
               <Route path="/create" element={
                 <ProtectedRoute allowedRoles={['manager', 'senior_manager']}>

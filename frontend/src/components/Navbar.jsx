@@ -30,10 +30,11 @@ export default function Navbar() {
 
   return (
     <nav className="navbar">
-      <Link to="/" className="brand">
+      <Link to="/about" className="brand">
         <Package className="text-accent" />
         Chain<span>Proof</span>
       </Link>
+
       
       <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
         
