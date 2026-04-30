@@ -328,9 +328,19 @@ export const fetchAnomalies = async () => {
 export const approveReroute = async (id) => {
   const shipments = getStored('cp_shipments', []);
   const s = shipments.find(x => x.shipmentId === id);
-  if (s) { s.isRerouted = true; s.status = 'amber'; saveStored('cp_shipments', shipments); }
+  if (s) {
+    const nearest = findNearestDistrict(s.currentLocation.lat, s.currentLocation.lng);
+    s.destination = `${nearest.name} (Emergency Reroute)`;
+    s.destCoords = { lat: nearest.lat, lng: nearest.lng };
+    s.isRerouted = true;
+    s.status = 'amber';
+    s.statusMessage = "Rerouting to nearest cold storage...";
+    saveStored('cp_shipments', shipments);
+    window.dispatchEvent(new Event('storage')); // Notify map to update
+  }
   return { success: true };
 };
+
 
 export const confirmDelivery = async (id) => {
   const shipments = getStored('cp_shipments', []);
