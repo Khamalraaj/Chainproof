@@ -249,10 +249,18 @@ export default function Dashboard() {
                   </p>
                   
                   {a.status === 'red' && !a.isRerouted && (
-                    <button className="btn" style={{ background: 'var(--color-amber)', color: 'black', width: '100%', fontSize: '0.85rem' }} onClick={() => handleReroute(a.shipmentId)}>
-                      Approve Reroute to Cold Storage
-                    </button>
+                    <div style={{ marginTop: '12px' }}>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--color-amber)', marginBottom: '8px', padding: '8px', background: 'rgba(245, 158, 11, 0.1)', borderRadius: '6px', border: '1px dashed var(--color-amber)' }}>
+                        <strong>💡 AI Rescue Suggestion:</strong><br/>
+                        Nearest District: {a.nearestDistrict?.name}<br/>
+                        Distance: ~{a.nearestDistrict?.distance} km
+                      </div>
+                      <button className="btn" style={{ background: 'var(--color-amber)', color: 'black', width: '100%', fontSize: '0.85rem' }} onClick={() => handleReroute(a.shipmentId)}>
+                        Approve Reroute to {a.nearestDistrict?.name}
+                      </button>
+                    </div>
                   )}
+
                   {a.isRerouted && (
                     <div style={{ fontSize: '0.85rem', color: 'var(--color-amber)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                       <CheckCircle size={14} /> Reroute Approved

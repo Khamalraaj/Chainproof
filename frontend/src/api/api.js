@@ -14,6 +14,45 @@ const CITY_COORDS = {
   'goa': { lat: 15.2993, lng: 74.1240 }
 };
 
+const DISTRICTS_INDIA = [
+  { name: 'Kanchipuram', lat: 12.8342, lng: 79.7036 },
+  { name: 'Nellore', lat: 14.4426, lng: 79.9865 },
+  { name: 'Chittoor', lat: 13.2172, lng: 79.1003 },
+  { name: 'Anantapur', lat: 14.6819, lng: 77.6006 },
+  { name: 'Vijayawada', lat: 16.5062, lng: 80.6480 },
+  { name: 'Pune', lat: 18.5204, lng: 73.8567 },
+  { name: 'Nagpur', lat: 21.1458, lng: 79.0882 },
+  { name: 'Agra', lat: 27.1767, lng: 78.0081 },
+  { name: 'Surat', lat: 21.1702, lng: 72.8311 },
+  { name: 'Madurai', lat: 9.9252, lng: 78.1198 }
+];
+
+const getDistance = (lat1, lon1, lat2, lon2) => {
+  const R = 6371; // Radius of the earth in km
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+};
+
+const findNearestDistrict = (lat, lng) => {
+  let nearest = DISTRICTS_INDIA[0];
+  let minDist = getDistance(lat, lng, nearest.lat, nearest.lng);
+  
+  DISTRICTS_INDIA.forEach(d => {
+    const dist = getDistance(lat, lng, d.lat, d.lng);
+    if (dist < minDist) {
+      minDist = dist;
+      nearest = d;
+    }
+  });
+  return { ...nearest, distance: Math.round(minDist) };
+};
+
+
 const getStored = (key, initial) => {
   const stored = localStorage.getItem(key);
   let data = stored ? JSON.parse(stored) : initial;
@@ -270,8 +309,14 @@ export const signHandoff = async (id, data) => {
 
 export const fetchAnomalies = async () => {
   const shipments = getStored('cp_shipments', []);
-  return shipments.filter(s => s.status !== 'green' && s.isApproved);
+  const active = shipments.filter(s => s.status !== 'green' && s.isApproved && !s.isDelivered);
+  
+  return active.map(s => {
+    const nearest = findNearestDistrict(s.currentLocation.lat, s.currentLocation.lng);
+    return { ...s, nearestDistrict: nearest };
+  });
 };
+
 
 export const approveReroute = async (id) => {
   const shipments = getStored('cp_shipments', []);
