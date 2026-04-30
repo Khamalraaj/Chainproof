@@ -19,7 +19,7 @@ const CONTRACT_ABI = [
 ];
 
 // Use the contract address from your Remix deployment
-const CONTRACT_ADDRESS = "0x8280F28054d42A7b2c3C14a10df8c1EB18bD5F73"; 
+const CONTRACT_ADDRESS = "0xD0F2f37E9B5FF7fE7f73a07ED412d1A0894F2cf9"; 
 
 export const getBlockchainContract = async () => {
   const ethers = getEthers();
