@@ -33,9 +33,16 @@ app.get('/', (req, res) => {
 });
 
 // Start temperature monitor (runs every 2 minutes)
-startTemperatureMonitor();
+if (process.env.NODE_ENV !== 'production') {
+  startTemperatureMonitor();
+}
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`ChainProof server running on port ${PORT}`);
-});
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`ChainProof server running on port ${PORT}`);
+  });
+}
+
+module.exports = app;
+
