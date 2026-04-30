@@ -1,0 +1,77 @@
+.scroll-effect-wrapper {
+  /* Give the page height so the user can scroll */
+  height: 600vh;
+  position: relative;
+  color: #fff;
+  overflow-x: hidden;
+}
+
+.canvas-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+}
+
+#hero-lightpass {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.content-layers {
+  position: relative;
+  z-index: 1;
+  pointer-events: none; /* Let clicks pass through if needed */
+}
+
+.scroll-step {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5%;
+}
+
+.text-content {
+  background: rgba(0, 0, 0, 0.6);
+  padding: 2rem 3rem;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  max-width: 600px;
+  opacity: 0.9;
+  transform: translateY(20px);
+  transition: all 0.5s ease;
+}
+
+/* Different alignments for variety */
+.text-content.right {
+  margin-left: auto;
+}
+
+.text-content.center {
+  margin: 0 auto;
+  text-align: center;
+}
+
+.text-content h1 {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+  background: linear-gradient(90deg, #fff, #a0a0a0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-content h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.text-content p {
+  font-size: 1.25rem;
+  line-height: 1.6;
+  color: #ccc;
+}
